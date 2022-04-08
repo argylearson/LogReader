@@ -10,6 +10,16 @@ namespace LogReader
         private static string headers = "Log Message, Start Time, End Time, Time Diff\n";
         private static Dictionary<Guid, Log> startActivities = new Dictionary<Guid, Log>();
 
+        private static bool IncludeMessage = true;
+        private static bool IncludeStartTime = true;
+        private static bool IncludeEndTime = true;
+        private static bool IncludeTimeDifference = true;
+        private static bool IncludeStartMessage = false;
+        private static bool IncludeEndMessage = false;
+        private static bool IncludeSeverity = false;
+        private static bool IncludeSource = false;
+        private static bool IncludeIdentifier = false;
+
         public async static Task Main(string[] args)
         {
             try
@@ -51,13 +61,83 @@ namespace LogReader
                     inputFilePath = o.InputLogPath;
                 if (!string.IsNullOrEmpty (o.OutputLogPath))
                     outputFilePath = o.OutputLogPath;
+
+                if (o.IncludeMessage.HasValue)
+                {
+                    headers += "Log Message, ";
+                    IncludeMessage = o.IncludeMessage.Value;
+                }
+                if (o.StartTime.HasValue)
+                {
+                    headers += "Start Time, ";
+                    IncludeStartTime = o.StartTime.Value;
+                }
+                if (o.EndTime.HasValue)
+                {
+                    headers += "End Time, ";
+                    IncludeEndTime = o.EndTime.Value;
+                }
+                if (o.IncludeTimeDifference.HasValue)
+                {
+                    headers += "Time Diff, ";
+                    IncludeTimeDifference = o.IncludeTimeDifference.Value;
+                }
+                if (o.IncludeStartMessage.HasValue)
+                {
+                    headers += "Start Message, ";
+                    IncludeStartMessage = o.IncludeStartMessage.Value;
+                }
+                if (o.IncludeEndMessage.HasValue)
+                {
+                    headers += "End Message, ";
+                    IncludeEndMessage = o.IncludeEndMessage.Value;
+                }
+                if (o.IncludeSeverity.HasValue)
+                {
+                    headers += "Severity, ";
+                    IncludeSeverity = o.IncludeSeverity.Value;
+                }
+                if (o.IncludeSource.HasValue)
+                {
+                    headers += "Source, ";
+                    IncludeSeverity = o.IncludeSource.Value;
+                }
+                if (o.IncludeIdentifier.HasValue)
+                {
+                    headers += "Identifier, ";
+                    IncludeSeverity = o.IncludeIdentifier.Value;
+                }
+
+                headers.Trim().TrimEnd(',');
             }
             );
         }
 
         private static string WriteActivity(Log startLog, Log endLog)
         {
-            return $"{startLog.message} - {endLog.message}, {startLog.timeStampString}, {endLog.timeStampString}, {(endLog.timeStamp - startLog.timeStamp).TotalSeconds}\n";
+            var result = "";
+            if (IncludeMessage)
+                result += $"{startLog.message} - {endLog.message}, ";
+            if (IncludeStartTime)
+                result += $"\"{startLog.timeStampString}\", ";
+            if (IncludeEndTime)
+                result += $"\"{endLog.timeStampString}\", ";
+            if (IncludeTimeDifference)
+                result += $"{(endLog.timeStamp - startLog.timeStamp).TotalSeconds}, ";
+            if (IncludeStartMessage)
+                result += $"{startLog.message}, ";
+            if (IncludeEndMessage)
+                result += $"{endLog.message}, ";
+            //worry about if the severities are different?
+            if (IncludeSeverity)
+                result += $"{endLog.level}, ";
+            //same question here
+            if (IncludeSource)
+                result += $"{endLog.source}, ";
+            if (IncludeIdentifier)
+                result += $"{endLog.id}, ";
+
+            return $"{result.Trim().TrimEnd(',')}\n";
         }
     }
 }
