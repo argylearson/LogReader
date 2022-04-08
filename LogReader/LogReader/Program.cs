@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using CommandLine;
+using System.Text;
 
 namespace LogReader
 {
@@ -13,6 +14,9 @@ namespace LogReader
         {
             try
             {
+                //check for command line arguments
+                ParseOptions(args);
+
                 using var file = File.Create(outputFilePath);
                 await file.WriteAsync(new UTF8Encoding(true).GetBytes(headers));
 
@@ -20,13 +24,10 @@ namespace LogReader
                 {
                     var log = new Log(row);
 
-                    var activityExists = startActivities.TryGetValue(log.id, out var existingActivity);
-
-                    //we expect start activities to always preceed end activities
-                    //so this will write to our changed file
-                    if (activityExists)
+                    //we found a match
+                    if (startActivities.TryGetValue(log.id, out var existingActivity))
                     {
-                        //however, we'll account for weirdness in case we make this async
+                        //we would expect 'start' entries to always come first. however, we'll account for weirdness in case we make this async
                         var line = log.isStart ? WriteActivity(log, existingActivity) : WriteActivity(existingActivity, log);
                         await file.WriteAsync(new UTF8Encoding(true).GetBytes(line));
                     }
@@ -40,6 +41,18 @@ namespace LogReader
             {
                 throw;
             }
+        }
+
+        private static void ParseOptions(string[] args)
+        {
+            Parser.Default.ParseArguments<CommandLineOptions>(args).WithParsed<CommandLineOptions>(o =>
+            {
+                if (!string.IsNullOrEmpty(o.InputLogPath))
+                    inputFilePath = o.InputLogPath;
+                if (!string.IsNullOrEmpty (o.OutputLogPath))
+                    outputFilePath = o.OutputLogPath;
+            }
+            );
         }
 
         private static string WriteActivity(Log startLog, Log endLog)
