@@ -7,7 +7,7 @@ namespace LogReader
     {
         private static string inputFilePath = @"c:\api.log";
         private static string outputFilePath = $"{Directory.GetCurrentDirectory()}\\api.csv";
-        private static string headers = "Log Message, Start Time, End Time, Time Diff\n";
+        private static string headers = "";
         private static Dictionary<Guid, Log> startActivities = new Dictionary<Guid, Log>();
 
         private static bool IncludeMessage = true;
@@ -62,53 +62,46 @@ namespace LogReader
                 if (!string.IsNullOrEmpty (o.OutputLogPath))
                     outputFilePath = o.OutputLogPath;
 
-                if (o.IncludeMessage.HasValue)
+                if (IncludeMessage = o.IncludeMessage ?? IncludeMessage)
                 {
                     headers += "Log Message, ";
-                    IncludeMessage = o.IncludeMessage.Value;
                 }
-                if (o.StartTime.HasValue)
+                if (IncludeStartTime = o.IncludeStartTime ?? IncludeStartTime)
                 {
                     headers += "Start Time, ";
-                    IncludeStartTime = o.StartTime.Value;
                 }
-                if (o.EndTime.HasValue)
+                if (IncludeEndTime = o.IncludeEndTime ?? IncludeEndTime)
                 {
                     headers += "End Time, ";
-                    IncludeEndTime = o.EndTime.Value;
                 }
-                if (o.IncludeTimeDifference.HasValue)
+                if (IncludeTimeDifference = o.IncludeTimeDifference ?? IncludeTimeDifference)
                 {
                     headers += "Time Diff, ";
-                    IncludeTimeDifference = o.IncludeTimeDifference.Value;
-                }
-                if (o.IncludeStartMessage.HasValue)
-                {
-                    headers += "Start Message, ";
-                    IncludeStartMessage = o.IncludeStartMessage.Value;
-                }
-                if (o.IncludeEndMessage.HasValue)
-                {
-                    headers += "End Message, ";
-                    IncludeEndMessage = o.IncludeEndMessage.Value;
-                }
-                if (o.IncludeSeverity.HasValue)
-                {
-                    headers += "Severity, ";
-                    IncludeSeverity = o.IncludeSeverity.Value;
-                }
-                if (o.IncludeSource.HasValue)
-                {
-                    headers += "Source, ";
-                    IncludeSeverity = o.IncludeSource.Value;
-                }
-                if (o.IncludeIdentifier.HasValue)
-                {
-                    headers += "Identifier, ";
-                    IncludeSeverity = o.IncludeIdentifier.Value;
                 }
 
-                headers.Trim().TrimEnd(',');
+
+                if (IncludeStartMessage = o.IncludeStartMessage ?? IncludeStartMessage)
+                {
+                    headers += "Start Message, ";
+                }
+                if (IncludeEndMessage = o.IncludeEndMessage ?? IncludeEndMessage)
+                {
+                    headers += "End Message, ";
+                }
+                if (IncludeSeverity = o.IncludeSeverity ?? IncludeSeverity)
+                {
+                    headers += "Severity, ";
+                }
+                if (IncludeSource = o.IncludeSource ?? IncludeSource)
+                {
+                    headers += "Source, ";
+                }
+                if (IncludeIdentifier = o.IncludeIdentifier ?? IncludeIdentifier)
+                {
+                    headers += "Identifier, ";
+                }
+
+                headers = $"{headers.Trim().TrimEnd(',')}\n";
             }
             );
         }

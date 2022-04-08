@@ -12,31 +12,33 @@ namespace LogReader
 
 
 
-        [Option("startTime", Required = false, HelpText = "Include the start time of the event")]
-        public bool? StartTime { get; set; }
-
-        [Option("endTime", Required = false, HelpText = "Include the end time of the event")]
-        public bool? EndTime { get; set; }
-
-        [Option("message", Required = false, HelpText = "Include the message for the event")]
+        [Option("includeMessage", Required = false, HelpText = "Include the message for the event")]
         public bool? IncludeMessage { get; set; }
 
-        [Option("startMessage", Required = false, HelpText = "Include the start message for the event")]
-        public bool? IncludeStartMessage { get; set; }
+        [Option("includeStartTime", Required = false, HelpText = "Include the start time of the event")]
+        public bool? IncludeStartTime { get; set; }
 
-        [Option("endMessage", Required = false, HelpText = "Include the end message for the event")]
-        public bool? IncludeEndMessage { get; set; }
+        [Option("includeEndTime", Required = false, HelpText = "Include the end time of the event")]
+        public bool? IncludeEndTime { get; set; }
 
-        [Option("severity", Required = false, HelpText = "Include the severity of the event")]
-        public bool? IncludeSeverity { get; set; }
-
-        [Option("timeDifference", Required = false, HelpText = "Include the time between the start event and end event")]
+        [Option("includeTimeDifference", Required = false, HelpText = "Include the time between the start event and end event")]
         public bool? IncludeTimeDifference { get; set; }
 
-        [Option("source", Required = false, HelpText = "Include the source of the event")]
+
+
+        [Option("includeStartMessage", Required = false, HelpText = "Include the start message for the event")]
+        public bool? IncludeStartMessage { get; set; }
+
+        [Option("includeEndMessage", Required = false, HelpText = "Include the end message for the event")]
+        public bool? IncludeEndMessage { get; set; }
+
+        [Option("includeSeverity", Required = false, HelpText = "Include the severity of the event")]
+        public bool? IncludeSeverity { get; set; }
+
+        [Option("includeSource", Required = false, HelpText = "Include the source of the event")]
         public bool? IncludeSource { get; set; }
 
-        [Option("identifier", Required = false, HelpText = "Include the unique identifier of the event")]
+        [Option("includeIdentifier", Required = false, HelpText = "Include the unique identifier of the event")]
         public bool? IncludeIdentifier { get; set; }
     }
 }
