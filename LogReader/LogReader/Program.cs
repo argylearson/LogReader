@@ -6,32 +6,34 @@ namespace LogReader
     {
         private static string inputFilePath = @"c:\api.log";
         private static string outputFilePath = $"{Directory.GetCurrentDirectory()}\\api.csv";
-        private static Dictionary<string, Log> startActivities = new Dictionary<string, Log>();
+        private static string headers = "Log Message, Start Time, End Time, Time Diff\n";
+        private static Dictionary<Guid, Log> startActivities = new Dictionary<Guid, Log>();
 
         public async static Task Main(string[] args)
         {
             try
             {
                 using var file = File.Create(outputFilePath);
-                var linesToWrite = new List<string>();
+                await file.WriteAsync(new UTF8Encoding(true).GetBytes(headers));
 
                 foreach (var row in File.ReadLines(inputFilePath))
                 {
                     var log = new Log(row);
 
-                    var activityExists = startActivities.TryGetValue(log.message, out var existingActivity);
+                    var activityExists = startActivities.TryGetValue(log.id, out var existingActivity);
 
                     //we expect start activities to always preceed end activities
                     //so this will write to our changed file
                     if (activityExists)
-                        await file.WriteAsync(new UTF8Encoding(true).GetBytes(WriteActivity(existingActivity, log)));
-                    //linesToWrite.Add(WriteActivity(existingActivity, log));
+                    {
+                        //however, we'll account for weirdness in case we make this async
+                        var line = log.isStart ? WriteActivity(log, existingActivity) : WriteActivity(existingActivity, log);
+                        await file.WriteAsync(new UTF8Encoding(true).GetBytes(line));
+                    }
                     else
-                        startActivities.Add(log.message, log);
+                        startActivities.Add(log.id, log);
                 }
 
-                //using var file = File.Create(outputFilePath);
-                //await file.w//.WriteAllLinesAsync(linesToWrite);
                 file.Close();
             }
             catch
